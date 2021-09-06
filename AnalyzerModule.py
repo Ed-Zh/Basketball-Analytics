@@ -1,34 +1,13 @@
 import numpy as np
+import pandas as pd
+import matplotlib.pyplot as plt
+from scipy.signal import savgol_filter
+
 import cv2
 import mediapipe as mp
-import numpy as np
-import pandas as pd
-from scipy.signal import savgol_filter
-import matplotlib.pyplot as plt
 
+from constants import *
 
-# Limbs
-LEG_UPPER_RIGHT = (24,26)
-LEG_LOWER_RIGHT = (26,28)
-UPPER_BODY_RIGHT = (12,24)
-ARM_UPPER_RIGHT = (12,14)
-ARM_LOWER_RIGHT = (14,16)
-FOOT_RIGHT = (28,32)
-
-
-# Joints
-ANKLE_RIGHT = (26,28,32)
-ELBOW_RIGHT = (12,14,16)
-SHOULDER_RIGHT = (14,12,24)
-HIP_RIGHT = (12,24,26)
-KNEE_RIGHT = (24,26,28)
-
-joint_to_text = {(26,28,32):'Ankle',(12,14,16):'Elbow',(14,12,24):'Shdlr', (12,24,26):'Hip', (24,26,28): 'Knee'}
-
-'''
-def smooth(xs):
-    return 1/3 * (xs[2:] + xs[1:-1] + xs[:-2])
-'''
 
 class Analyzer():
 
@@ -288,10 +267,35 @@ class Analyzer():
             avg, labels = self.colorize_angular_acc(acc,low,high)
             self.avg_alpha[joints] = avg
             self.joint_colors[joints] = labels
-        
-        pass
-        
+                
         self.compute_v_a(16) # Right Wrist
+
+    def score_motion(self):
+        '''
+        Evaluate the closeness of the activation timings stored in ts. Assign a score 
+        '''
+
+        import Scoring
+        timings = [np.argmax(alpha)/len(alpha) for alpha in self.angular_acceleration.values()] 
+        score = Scoring.score(timings)
+
+        return score
+
+
+    def give_suggestions(self):
+        '''
+        Analyze the peak-activation timings of muscle groups relative to the glutes (the most stable muscle when shooting)
+        Give qualitative instructions on how to improve shot mechanics
+        '''
+
+        import Scoring
+
+        d = {joint:np.argmax(alpha)/len(alpha) for joint,alpha in self.angular_acceleration.items()}
+        return Scoring.suggestions(d,0.1)
+
+
+
+
 
     def output_video(self,name = 'output', limbs = [LEG_LOWER_RIGHT, LEG_UPPER_RIGHT, UPPER_BODY_RIGHT], out_frame_rate = 12):
 
@@ -370,7 +374,7 @@ class Analyzer():
             cols = [col for col in cols_to_analyze if col in alpha.columns]
 
 
-        fig, (ax1, ax2) = plt.subplots(2,figsize = (15,10))
+        fig, (ax1, ax2) = plt.subplots(2,figsize = (16,12))
         fig.suptitle('Muscle Activation and Ball Acceleration')
 
         ax1.plot(t,alpha[cols])
@@ -387,10 +391,11 @@ class Analyzer():
         ax2.set(xlabel="relative time", ylabel='relative speed/acceleration')
         ax2.legend(['speed','acceleration'])
 
-
+        fig.text(0.2, 0.47, 'Overall Score: ' + str(self.score_motion()), horizontalalignment='left',verticalalignment='center',fontsize = 15, family = 'sans-serif', color = 'red')
+        fig.text(0.2, 0.4,self.give_suggestions(),horizontalalignment='left',verticalalignment='center',fontsize = 12, family = 'sans-serif',color = 'blue')
         fig.savefig(('Graphs/' + name + '.pdf'))
 
-        return
+        return fig
 
 
 
