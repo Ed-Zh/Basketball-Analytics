@@ -9,7 +9,7 @@ If there is one thing that I wish I had learned earlier in my ten years of exper
 
 
 
-Too often, when training for better performance, beginners put too much emphasis on the drills: "I should complete 80 behind-the-back dribbles, 100 free throws, 50 three-pointers, etc." Focusing on the drills usually means very little attention paid to their body mechanics during the moves. Should I activate my glute first or quad first? 
+Too often, when training for better performance, beginners put too much emphasis on the drills: "I should complete 80 behind-the-back dribbles, 100 free throws, 50 three-pointers, etc." Focusing on the drills usually means very little attention paid to their body mechanics during the moves. How much should I bend my knees? Should I contract my glute first or quad first? 
 
 
 
@@ -36,7 +36,11 @@ Different key muscle groups are activated at different time intervals when a pla
 3. Compute the angular acceleration at each joint using the limbs stemming from it (e.g. the rotational movement thigh and lower leg determines the angular acceleration at knee)
 4. Estimate the activation of a specific muscle group using angular acceleration at the corresponding joint (e.g. glute corresponds to hip). This follows from the angular part of Newton's Second Law (angular acceleration proportional to torque)
 
+## Addtional Functionality
 
+1. Produce a graph describing the player's shot mechanics as muslce activation vs. time
+2. Evaluate the efficiency of the shot as a score 
+3. Give suggestions on how to improve the shot mechanics
 
 Note: the speed and acceleration are in relative terms, scaled for comparision across players
 
