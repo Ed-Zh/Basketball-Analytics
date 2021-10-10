@@ -52,6 +52,8 @@ The *AnalyzerModule.py* file wraps an *Analyzer* class, the instance of which ca
 
 The *pipeline.py* file applies *Analyzer* to produce i) a slow-motion video tracking (at real time) the activation of each muscle groups and ii) a graph illustrating the graph. 
 
+The *Scoring.py* file implements a scoring system to evaluate the efficiency of the player's shot mechanics.
+
 
 
 ## Demo
